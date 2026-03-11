@@ -438,6 +438,20 @@ section[data-testid="stSidebar"] .stButton button:hover {
     color: #4338ca;
     min-width: 90px;
 }
+.history-time {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-left: auto;
+}
+.history-best {
+    background: #ecfdf5;
+    color: #059669;
+    font-size: 0.68rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 6px;
+    margin-left: 0.4rem;
+    font-family: 'Space Mono', monospace;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -521,12 +535,14 @@ if page == "🏅 Leaderboard":
     best = df['score'].iloc[0] if len(df) > 0 else 1.0
 
     def podium_html(row, css_class, medal, rank_label):
+        delta = row['score'] - 0.5
         return f"""
         <div class="podium-block {css_class}">
             <div class="podium-medal">{medal}</div>
             <div class="podium-rank">{rank_label}</div>
             <div class="podium-name">{row['name']}</div>
             <div class="podium-score">{row['score']:.6f}</div>
+            <div class="podium-badge">+{delta:.4f} vs random</div>
         </div>"""
 
     # Build podium HTML: 2nd | 1st | 3rd
@@ -669,13 +685,13 @@ elif page == "📤 Submit":
 
         for _, hrow in history.iterrows():
             is_best = hrow['score'] == best_so_far
-            best_label = '<span style="background:#ecfdf5;color:#059669;font-size:0.68rem;padding:0.1rem 0.4rem;border-radius:6px;margin-left:0.4rem;font-family:Space Mono,monospace">BEST</span>' if is_best else ''
+            best_label = '<span class="history-best">BEST</span>' if is_best else ''
             st.markdown(f"""
             <div class="history-row">
                 <span class="history-attempt">#{int(hrow['attempt'])}</span>
                 <span class="history-score">{hrow['score']:.6f}</span>
                 {best_label}
-                <span style="color:#94a3b8;font-size:0.75rem;margin-left:auto">{str(hrow['submitted_at'])[:16]}</span>
+                <span class="history-time">{str(hrow['submitted_at'])[:16]}</span>
             </div>""", unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
