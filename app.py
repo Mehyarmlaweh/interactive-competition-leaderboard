@@ -772,7 +772,6 @@ elif page == "🔑 Admin":
     st.markdown('<div class="section-title">Registered Students</div>', unsafe_allow_html=True)
     students_df = get_all_students()
     if len(students_df) > 0:
-        st.dataframe(students_df, use_container_width=True)
         csv_export = students_df.to_csv(index=False)
         st.download_button(
             "⬇️ Download token list (CSV)",
@@ -780,6 +779,33 @@ elif page == "🔑 Admin":
             "student_tokens.csv",
             "text/csv"
         )
+        st.markdown("") # spacer
+        for _, s in students_df.iterrows():
+            col_name, col_token, col_date, col_del = st.columns([2, 1.5, 2, 0.6])
+            with col_name:
+                st.markdown(f"**{s['name']}**")
+            with col_token:
+                st.code(s['token'], language=None)
+            with col_date:
+                st.caption(str(s['created_at'])[:16])
+            with col_del:
+                if st.button("🗑️", key=f"del_{s['token']}", help=f"Delete {s['name']}"):
+                    st.session_state[f"confirm_del_{s['token']}"] = True
+
+            # Confirmation row
+            if st.session_state.get(f"confirm_del_{s['token']}"):
+                st.warning(f"Delete **{s['name']}** and all their submissions?")
+                c1, c2 = st.columns([1, 4])
+                with c1:
+                    if st.button("Yes, delete", key=f"confirm_yes_{s['token']}", type="primary"):
+                        delete_student(s['token'])
+                        st.session_state.pop(f"confirm_del_{s['token']}", None)
+                        st.success(f"Deleted {s['name']}.")
+                        st.rerun()
+                with c2:
+                    if st.button("Cancel", key=f"confirm_no_{s['token']}"):
+                        st.session_state.pop(f"confirm_del_{s['token']}", None)
+                        st.rerun()
     else:
         st.info("No students registered yet.")
 

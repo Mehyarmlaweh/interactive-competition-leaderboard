@@ -180,3 +180,12 @@ def reset_leaderboard():
     conn.execute("DELETE FROM submissions")
     conn.commit()
     conn.close()
+
+
+def delete_student(token: str):
+    """Admin: remove a student and all their submissions."""
+    conn = sqlite3.connect(DB_NAME)
+    conn.execute("DELETE FROM submissions WHERE token = ?", (token,))
+    conn.execute("DELETE FROM students WHERE token = ?", (token,))
+    conn.commit()
+    conn.close()
