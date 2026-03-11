@@ -693,7 +693,10 @@ elif page == "📤 Submit":
                 <span class="history-attempt">#{int(hrow['attempt'])}</span>
                 <span class="history-score">{hrow['score']:.6f}</span>
                 {best_label}
-                <span class="history-time">{time_str}</span>
+                st.markdown(
+                    f'<span class="history-time">{time_str}</span>',
+                    unsafe_allow_html=True
+                )
             </div>
             """
 
