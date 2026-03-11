@@ -690,16 +690,12 @@ elif page == "📤 Submit":
 
             rows_html += f"""
             <div class="history-row">
-                <span class="history-attempt">#{int(hrow['attempt'])}</span>
-                <span class="history-score">{hrow['score']:.6f}</span>
-                {best_label}
-                st.markdown(
-                    f'<span class="history-time">{time_str}</span>',
-                    unsafe_allow_html=True
-                )
+            <span class="history-attempt">#{int(hrow['attempt'])}</span>
+            <span class="history-score">{hrow['score']:.6f}</span>
+            {best_label}
+            <span class="history-time">{time_str}</span>
             </div>
             """
-
         st.markdown(rows_html, unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
