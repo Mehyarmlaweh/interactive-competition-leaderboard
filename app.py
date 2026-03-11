@@ -629,33 +629,41 @@ elif page == "📤 Submit":
 
     # ── Token authentication ────────────────────────────────────────────────
     if not st.session_state.authenticated_token:
-        st.markdown('<div class="submit-wrap">', unsafe_allow_html=True)
-        st.markdown('<div class="info-card"><h4>🔑 Enter your token</h4>', unsafe_allow_html=True)
-        st.markdown("Your instructor gave you a unique token. Enter it below to authenticate.", unsafe_allow_html=True)
 
-        col_t, col_b = st.columns([3, 1])
-        with col_t:
-            token_input = st.text_input(
-                "Token",
-                placeholder="e.g. ABC123XYZ789",
-                label_visibility="collapsed"
-            ).strip().upper()
-        with col_b:
-            verify_btn = st.button("Verify →", use_container_width=True, type="primary")
+        with st.container():
+            st.markdown("""
+            <div class="info-card">
+                <h4>🔑 Enter your token</h4>
+                <p style="font-size:0.9rem;color:#64748b;margin-bottom:0.8rem;">
+                Your instructor gave you a unique token. Enter it below to authenticate.
+                </p>
+            """, unsafe_allow_html=True)
 
-        if verify_btn or token_input:
+            col_t, col_b = st.columns([4,1])
+
+            with col_t:
+                token_input = st.text_input(
+                    "Insert token",
+                    placeholder="e.g. ABC123XYZ789",
+                    label_visibility="collapsed"
+                ).strip().upper()
+
+            with col_b:
+                verify_btn = st.button("Verify →", use_container_width=True, type="primary")
+
+            st.markdown("</div>", unsafe_allow_html=True)
+
+        if verify_btn:
             student = validate_token(token_input)
             if student:
                 st.session_state.authenticated_token = student["token"]
                 st.session_state.authenticated_name = student["display_name"]
                 st.success(f"✅ Welcome, **{student['display_name']}**!")
                 st.rerun()
-            elif token_input:
+            else:
                 st.error("❌ Invalid token. Please check with your instructor.")
 
-        st.markdown('</div></div>', unsafe_allow_html=True)
         st.stop()
-
     # ── Authenticated ───────────────────────────────────────────────────────
     name = st.session_state.authenticated_name
     token = st.session_state.authenticated_token
