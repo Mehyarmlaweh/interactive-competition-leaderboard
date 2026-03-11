@@ -535,14 +535,12 @@ if page == "🏅 Leaderboard":
     best = df['score'].iloc[0] if len(df) > 0 else 1.0
 
     def podium_html(row, css_class, medal, rank_label):
-        delta = row['score'] - 0.5
         return f"""
         <div class="podium-block {css_class}">
             <div class="podium-medal">{medal}</div>
             <div class="podium-rank">{rank_label}</div>
             <div class="podium-name">{row['name']}</div>
             <div class="podium-score">{row['score']:.6f}</div>
-            <div class="podium-badge">+{delta:.4f} vs random</div>
         </div>"""
 
     # Build podium HTML: 2nd | 1st | 3rd
@@ -683,18 +681,23 @@ elif page == "📤 Submit":
             <div style="margin-bottom:0.5rem;color:#475569;font-size:0.88rem;">Best score: <b style="color:#4338ca;font-family:'Space Mono',monospace">{best_so_far:.6f}</b></div>
         """, unsafe_allow_html=True)
 
+        rows_html = ""
+
         for _, hrow in history.iterrows():
             is_best = hrow['score'] == best_so_far
             best_label = '<span class="history-best">BEST</span>' if is_best else ''
-            st.markdown(f"""
+            time_str = pd.to_datetime(hrow['submitted_at']).strftime("%Y-%m-%d %H:%M")
+
+            rows_html += f"""
             <div class="history-row">
                 <span class="history-attempt">#{int(hrow['attempt'])}</span>
                 <span class="history-score">{hrow['score']:.6f}</span>
                 {best_label}
-                <span class="history-time">{str(hrow['submitted_at'])[:16]}</span>
-            </div>""", unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+                <span class="history-time">{time_str}</span>
+            </div>
+            """
 
+        st.markdown(rows_html, unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
     # Upload
