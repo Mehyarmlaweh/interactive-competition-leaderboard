@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from database import (
-    init_db, submit_score, get_leaderboard,
+    delete_student, init_db, submit_score, get_leaderboard,
     validate_token, register_student, get_submission_history,
     get_total_students, get_total_submissions,
     bulk_register_students, get_all_students, reset_leaderboard
