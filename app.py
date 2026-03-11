@@ -724,11 +724,13 @@ elif page == "📤 Submit":
                 with st.spinner("Evaluating…"):
                     try:
                         score = evaluate_submission(uploaded_file)
+                        history_before = get_submission_history(token)
+                        prev_best = history_before['score'].max() if len(history_before) > 0 else None
                         submit_score(token, score)
-                        prev_best = get_submission_history(token)['score'].max()
-                        improvement = score >= prev_best
-                        if improvement and len(get_submission_history(token)) > 1:
+                        improvement = prev_best is not None and score > prev_best
+                        if improvement:
                             st.balloons()
+                            
                         st.success(f"✅ Submitted! ROC-AUC = **{score:.6f}**")
                         st.rerun()
                     except Exception as e:
